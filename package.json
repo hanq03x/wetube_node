@@ -1,0 +1,19 @@
+{
+  "name": "wetube",
+  "version": "1.0.0",
+  "description": "The best way to watch videos",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hanqpark/wetube_nodejs.git"
+  },
+  "author": "hanqpark",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/hanqpark/wetube-nodejs/issues"
+  },
+  "homepage": "https://github.com/hanqpark/wetube-nodejs#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
