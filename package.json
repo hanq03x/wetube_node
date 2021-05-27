@@ -5,15 +5,24 @@
   "main": "index.js",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/hanqpark/wetube_nodejs.git"
+    "url": "git+https://github.com/hanqpark/wetube_node.git"
+  },
+  "scripts": {
+    "dev": "nodemon --exec babel-node index.js"
   },
   "author": "hanqpark",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/hanqpark/wetube-nodejs/issues"
+    "url": "https://github.com/hanqpark/wetube_node/issues"
   },
-  "homepage": "https://github.com/hanqpark/wetube-nodejs#readme",
+  "homepage": "https://github.com/hanqpark/wetube_node#readme",
   "dependencies": {
     "express": "^4.17.1"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.14.3",
+    "@babel/node": "^7.14.2",
+    "@babel/preset-env": "^7.14.2",
+    "nodemon": "^2.0.7"
   }
 }
