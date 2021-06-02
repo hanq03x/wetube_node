@@ -13,6 +13,7 @@ app.set("views", process.cwd() + "/src/views");
 // 순서가 매우 중요합니다!!
 // app.use(routerLogger, methodLogger);
 app.use(logger);
+app.use(express.urlencoded({ extended: true })); // POST로 받은 내용을 확인할 수 있게 도와줌
 app.use("/", globalRouter);
 app.use("/videos", videoRouter);
 app.use("/users", userRouter);
