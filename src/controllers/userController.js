@@ -146,14 +146,27 @@ export const getEdit = (req, res) =>
   res.render("edit-profile", { pageTitle: "Edit Profile" });
 
 export const postEdit = async (req, res) => {
+  // user 및 email 겹치는지, 바꾸려는 이메일이 전 이메일과 동일한지 확인하는 코드 생성해서 git commit 해보기
   const {
     session: {
       user: { _id },
     },
     body: { name, email, username, location },
   } = req;
-  await User.findByIdAndUpdate(_id, { name, email, username, location });
-  return res.render("edit-profile");
+  const updatedUser = await User.findByIdAndUpdate(
+    _id,
+    {
+      name,
+      email,
+      username,
+      location,
+    },
+    {
+      new: true,
+    }
+  );
+  req.session.user = updatedUser;
+  return res.redirect("/users/edit");
 };
 
 export const remove = (req, res) => res.send("Remove User");
