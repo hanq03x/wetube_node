@@ -7,7 +7,7 @@ import {
   postUpload,
   getDelete,
 } from "../controllers/videoController";
-import { protectorMiddleware } from "../middlewares";
+import { protectorMiddleware, videoUpload } from "../middlewares";
 
 const videoRouter = express.Router();
 
@@ -22,7 +22,7 @@ videoRouter
   .route("/upload")
   .all(protectorMiddleware)
   .get(getUpload)
-  .post(postUpload); //upload를 id로 인식할 수 있음.. => 정규표현식으로 해결!!!
-videoRouter.route("/:id([0-9a-f]{24})/delete", protectorMiddleware, getDelete);
+  .post(videoUpload.single("video"), postUpload); //upload를 id로 인식할 수 있음.. => 정규표현식으로 해결!!!
+videoRouter.get("/:id([0-9a-f]{24})/delete", protectorMiddleware, getDelete);
 
 export default videoRouter;
