@@ -1,4 +1,5 @@
 import Video from "../models/Video";
+import User from "../models/User";
 
 export const home = async (req, res) => {
   const videos = await Video.find({}).sort({ createdAt: "desc" });
@@ -7,23 +8,34 @@ export const home = async (req, res) => {
 
 export const watch = async (req, res) => {
   const { id } = req.params;
-  const video = await Video.findById(id);
-  if (video) {
-    return res.render("videos/watch", { pageTitle: video.title, video });
+  const video = await Video.findById(id).populate("owner");
+  if (!video) {
+    return res.status(404).render("404", { pageTitle: "Video Not Found." });
   }
-  return res.status(404).render("404", { pageTitle: "Video Not Found." });
+  return res.render("videos/watch", { pageTitle: video.title, video });
 };
 
 export const getEdit = async (req, res) => {
-  const { id } = req.params;
+  const {
+    params: { id },
+    session: {
+      user: { _id },
+    },
+  } = req;
+
   const video = await Video.findById(id);
-  if (video) {
-    return res.render("videos/edit", {
-      pageTitle: `Edit ${video.title}`,
-      video,
-    });
+  if (!video) {
+    return res.status(404).render("404", { pageTitle: "Video Not Found." });
   }
-  return res.status(404).render("404", { pageTitle: "Video Not Found." });
+
+  // 로그인 된 유저가 영상의 주인이 아니면 수정을 할 수 없음!
+  if (String(video.owner) !== String(_id)) {
+    return res.status(403).redirect("/");
+  }
+  return res.render("videos/edit", {
+    pageTitle: `Edit ${video.title}`,
+    video,
+  });
 };
 
 export const postEdit = async (req, res) => {
@@ -49,14 +61,21 @@ export const postUpload = async (req, res) => {
   const {
     body: { title, description, hashtags },
     file,
+    session: {
+      user: { _id },
+    },
   } = req;
   try {
-    await Video.create({
+    const newVideo = await Video.create({
       title,
       description,
       fileUrl: file.path,
+      owner: _id,
       hashtags: Video.formatHashtags(hashtags),
     });
+    const user = await User.findById(_id);
+    user.videos.push(newVideo._id);
+    user.save();
     return res.redirect("/");
   } catch (error) {
     return res.status(404).render("upload", {
@@ -68,6 +87,16 @@ export const postUpload = async (req, res) => {
 
 export const getDelete = async (req, res) => {
   const { id } = req.params;
+  const {
+    user: { _id },
+  } = req.session;
+  const video = await Video.findById(id);
+  if (!video) {
+    return res.status(404).render("404", { pageTitle: "Video Not Found." });
+  }
+  if (String(owner) !== String(_id)) {
+    return res.status(403).redirect("/");
+  }
   await Video.findByIdAndDelete(id);
   return res.redirect("/");
 };
